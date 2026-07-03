@@ -95,6 +95,29 @@ class ModeCatalogTest(unittest.TestCase):
         )
         self.assertEqual(args.render_engine, "blender")
 
+    def test_cli_accepts_softbodies_render_engine(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(
+            [
+                "render",
+                "input.wav",
+                "--output",
+                "output.mp4",
+                "--render-engine",
+                "softbodies",
+                "--softbodies-scene",
+                "translucent",
+                "--softbody-preset",
+                "stable_medium",
+                "--softbody-visualization",
+                "shaded",
+            ]
+        )
+        self.assertEqual(args.render_engine, "softbodies")
+        self.assertEqual(args.softbodies_scene, "translucent")
+        self.assertEqual(args.softbody_preset, "stable_medium")
+        self.assertEqual(args.softbody_visualization, "shaded")
+
     def test_cli_accepts_lowpoly_aesthetic_alias(self) -> None:
         parser = build_parser()
         args = parser.parse_args(
@@ -187,7 +210,7 @@ class ModeCatalogTest(unittest.TestCase):
         self.assertEqual(args.blender_diagnostic_engine, "workbench")
 
     def test_find_blender_honors_environment_override(self) -> None:
-        with mock.patch.dict(os.environ, {"CITYPROMISEVID_BLENDER": __file__}, clear=False):
+        with mock.patch.dict(os.environ, {"HIGH_TRUST_RENDERER_BLENDER": __file__}, clear=False):
             self.assertEqual(_find_blender(), __file__)
 
 

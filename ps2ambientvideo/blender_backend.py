@@ -13,7 +13,11 @@ from .timeline import build_timeline, debug_targets_for_timeline
 
 
 def _find_blender() -> str | None:
-    env_blender = os.environ.get("CITYPROMISEVID_BLENDER") or os.environ.get("PS2AMBIENTVIDEO_BLENDER")
+    env_blender = (
+        os.environ.get("HIGH_TRUST_RENDERER_BLENDER")
+        or os.environ.get("CITYPROMISEVID_BLENDER")
+        or os.environ.get("PS2AMBIENTVIDEO_BLENDER")
+    )
     if env_blender:
         candidate = Path(env_blender).expanduser()
         if candidate.exists():
@@ -44,9 +48,9 @@ def _assert_blender() -> str:
     blender = _find_blender()
     if not blender:
         raise RuntimeError(
-            "Blender backend requested, but no Blender executable was found on PATH, in CITYPROMISEVID_BLENDER, "
-            "PS2AMBIENTVIDEO_BLENDER, or in standard install locations. Install Blender and add it to PATH, or set "
-            "CITYPROMISEVID_BLENDER."
+            "Blender backend requested, but no Blender executable was found on PATH, in "
+            "HIGH_TRUST_RENDERER_BLENDER, or in standard install locations. Install Blender and add it to PATH, "
+            "or set HIGH_TRUST_RENDERER_BLENDER."
         )
     return blender
 

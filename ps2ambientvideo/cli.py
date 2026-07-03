@@ -124,9 +124,27 @@ def build_parser() -> argparse.ArgumentParser:
     )
     render_parser.add_argument(
         "--render-engine",
-        choices=("opencv", "blender"),
+        choices=("opencv", "blender", "softbodies"),
         default="opencv",
-        help="Rendering backend. 'opencv' uses the existing CPU renderer; 'blender' is an experimental offline 3D proof backend.",
+        help="Rendering backend. 'opencv' uses the existing CPU renderer; 'blender' is an experimental offline 3D proof backend; 'softbodies' uses the integrated Panda3D gummy/gelatin renderer.",
+    )
+    render_parser.add_argument(
+        "--softbodies-scene",
+        choices=("floating", "obstacle_course", "translucent"),
+        default="floating",
+        help="Softbodies backend only: choose the gummy scene family to render.",
+    )
+    render_parser.add_argument(
+        "--softbody-preset",
+        choices=("soft", "medium", "firm", "stable_soft", "stable_medium", "stable_firm"),
+        default="stable_medium",
+        help="Softbodies backend only: physical behavior preset for the integrated gelatin objects.",
+    )
+    render_parser.add_argument(
+        "--softbody-visualization",
+        choices=("shaded", "wireframe", "displacement", "nodes"),
+        default="shaded",
+        help="Softbodies backend only: mesh visualization style.",
     )
     render_parser.add_argument(
         "--debug-frames",
@@ -210,6 +228,9 @@ def main(argv: list[str] | None = None) -> int:
             blender_smoke_scene=args.blender_smoke_scene,
             blender_quality=args.blender_quality,
             blender_diagnostic_engine=args.blender_diagnostic_engine,
+            softbodies_scene=args.softbodies_scene,
+            softbody_preset=args.softbody_preset,
+            softbody_visualization=args.softbody_visualization,
         )
         return 0
     if args.command == "contact-sheet":

@@ -11,7 +11,7 @@ python -m pip install -r requirements.txt
 The experimental Blender backend can use either:
 
 - `blender` on `PATH`, or
-- `CITYPROMISEVID_BLENDER` pointing to a Blender executable
+- `HIGH_TRUST_RENDERER_BLENDER` pointing to a Blender executable
 
 ## Before opening a PR
 

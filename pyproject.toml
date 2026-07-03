@@ -16,12 +16,16 @@ dependencies = [
 
 [project.scripts]
 high-trust-renderer = "ps2ambientvideo.cli:main"
-citypromisevid = "ps2ambientvideo.cli:main"
 
 [project.optional-dependencies]
 audio = [
   "librosa>=0.10",
   "scipy>=1.11",
+]
+softbodies = [
+  "panda3d>=1.10.14",
+  "imageio>=2.34.0",
+  "imageio-ffmpeg>=0.5.1",
 ]
 
 [tool.setuptools.packages.find]

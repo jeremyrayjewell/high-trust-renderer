@@ -18,7 +18,9 @@
 - contact sheets such as `*_contact_sheet.png`
 - QA/export folders such as `debug_*`
 - temporary proof outputs such as `tmp_*`
+- temporary softbodies frame folders such as `.tmp_*`
 - local logs like `render_proof_*.txt`
+- softbodies metrics/layout dumps such as `*_softbodies_metrics.csv`, `*_softbodies_layout.json`, and `*_softbodies_body_summary.json`
 - Python caches and test caches
 
 ## First public commit include list
@@ -43,7 +45,9 @@
 - `contact_sheet*.png`
 - `debug_*/`
 - `tmp_*/`
+- `.tmp_*/`
 - Blender proof logs, generated scripts, and metadata JSON kept under debug/output folders
+- softbodies metrics/layout/body-summary exports unless you intentionally want them in a release bundle
 - private song-derived renders or previews
 - private local audio files or paths from personal music folders
 - `smoke.wav` unless you explicitly decide to publish it as a redistributable sample

@@ -39,6 +39,7 @@ from .ps2fx import (
 )
 from .timeline import active_modes, build_modes, build_timeline, debug_targets_for_timeline, normalize_preset_name, palette_for
 from .blender_backend import render_video_blender
+from .softbodies_backend import render_video_softbodies
 
 
 def _assert_ffmpeg() -> str:
@@ -279,6 +280,9 @@ def render_video(
     blender_smoke_scene: str | None = None,
     blender_quality: str = "proof",
     blender_diagnostic_engine: str | None = None,
+    softbodies_scene: str = "floating",
+    softbody_preset: str = "stable_medium",
+    softbody_visualization: str = "shaded",
 ) -> None:
     preset = normalize_preset_name(preset)
     if aesthetic in {"retro_clean", "ps2_clean"}:
@@ -305,6 +309,24 @@ def render_video(
             blender_smoke_scene=blender_smoke_scene,
             blender_quality=blender_quality,
             blender_diagnostic_engine=blender_diagnostic_engine,
+        )
+        return
+    if render_engine == "softbodies":
+        render_video_softbodies(
+            input_path=input_path,
+            output_path=output_path,
+            duration=duration,
+            width=width,
+            height=height,
+            fps=fps,
+            seed=seed,
+            preset=preset,
+            audio_bitrate=audio_bitrate,
+            analysis_backend=analysis_backend,
+            debug_frames_dir=debug_frames_dir,
+            softbodies_scene=softbodies_scene,
+            softbody_preset=softbody_preset,
+            softbody_visualization=softbody_visualization,
         )
         return
     ffmpeg = _assert_ffmpeg()

@@ -19,5 +19,9 @@ dist/
 contact_sheet*.png
 debug_*/
 tmp_*/
+.tmp_*/
+*_softbodies_metrics.csv
+*_softbodies_layout.json
+*_softbodies_body_summary.json
 render_proof_*.txt
 smoke.wav
