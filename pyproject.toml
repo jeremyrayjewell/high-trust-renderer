@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "high-trust-renderer"
+version = "0.1.0"
+description = "Offline ambient music video renderer built for JRJ Enterprises and Aggregatron Records releases"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "opencv-python>=4.8",
+  "soundfile>=0.12",
+]
+
+[project.scripts]
+high-trust-renderer = "ps2ambientvideo.cli:main"
+citypromisevid = "ps2ambientvideo.cli:main"
+
+[project.optional-dependencies]
+audio = [
+  "librosa>=0.10",
+  "scipy>=1.11",
+]
+
+[tool.setuptools.packages.find]
+include = ["ps2ambientvideo*"]

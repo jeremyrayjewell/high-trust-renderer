@@ -1,0 +1,23 @@
+# Python caches and local test state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local agent/editor/project metadata
+.agents/
+.codex/
+.vscode/
+
+# Build and packaging outputs
+build/
+dist/
+*.egg-info/
+
+# Render artifacts and QA outputs
+*.mp4
+*_contact_sheet.png
+contact_sheet*.png
+debug_*/
+tmp_*/
+render_proof_*.txt
+smoke.wav
