@@ -63,7 +63,7 @@ class VisualSmokeTest(unittest.TestCase):
             audio_path = root / "smoke.wav"
             output_path = root / "proof.mp4"
             self._write_test_tone(audio_path, duration=2.0)
-            with self.assertRaisesRegex(RuntimeError, "blender.*PATH"):
+            with self.assertRaisesRegex(RuntimeError, r"(?i)blender.*path"):
                 render_video(
                     input_path=audio_path,
                     output_path=output_path,
