@@ -15,7 +15,7 @@ dist/
 
 # Render artifacts and QA outputs
 *.mp4
-*_contact_sheet.png
+*_contact_sheet*.png
 contact_sheet*.png
 debug_*/
 tmp_*/

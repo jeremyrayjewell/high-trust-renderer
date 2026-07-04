@@ -3,3 +3,4 @@ opencv-python>=4.8
 soundfile>=0.12
 librosa>=0.10
 scipy>=1.11
+pytest>=8.0

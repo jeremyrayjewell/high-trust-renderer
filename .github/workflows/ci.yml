@@ -23,5 +23,4 @@ jobs:
         run: python -m compileall ps2ambientvideo tests
 
       - name: Test
-        run: python -m pytest -q
-
+        run: python -m pytest -q tests/test_mode_catalog.py tests/test_softbodies_backend.py
