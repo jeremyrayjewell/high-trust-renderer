@@ -658,6 +658,7 @@ def add_sphere(location, scale, material, collection=None):
     obj = bpy.context.active_object
     obj.scale = scale
     obj.data.materials.append(material)
+    set_smooth(obj)
     return attach_to_collection(obj, collection) if collection is not None else obj
 
 
@@ -729,7 +730,13 @@ def add_wave_surface(center, width, depth, nx, ny, material, collection=None):
 
 def add_cloud_cluster(center, top_mat, under_mat, scale, collection=None):
     cx, cy, cz = center
-    puffs = [(-1.0, 0.0, 0.0), (-0.2, 0.12, 0.08), (0.6, -0.04, 0.0), (1.2, 0.06, 0.02)]
+    puffs = [
+        (-0.86, 0.02, -0.02),
+        (-0.34, 0.12, 0.06),
+        (0.24, -0.04, 0.10),
+        (0.74, 0.06, -0.02),
+        (0.08, 0.18, 0.18),
+    ]
     for ox, oy, oz in puffs:
         add_sphere((cx + ox, cy + oy, cz + oz), scale, under_mat, collection=collection)
         add_sphere((cx + ox * 0.98, cy + oy, cz + oz + 0.14), (scale[0] * 0.92, scale[1] * 0.92, scale[2] * 0.82), top_mat, collection=collection)
@@ -860,28 +867,37 @@ def build_dancer_showcase(collection):
     glass_mat = build_glass_material("DancerGlass")
     chrome_mat = build_material("DancerChrome", (0.96, 0.97, 1.0), roughness=0.06, metallic=0.72)
 
-    add_plane((center, 0.0, -1.0), (2.8, 2.2, 1.0), floor_mat, collection=collection)
+    add_plane((center, 0.0, -1.0), (3.2, 2.4, 1.0), floor_mat, collection=collection)
     add_plane((center, -0.55, -0.995), (2.0, 0.10, 1.0), stripe_mat, collection=collection)
-    add_plane((center, 2.0, 1.2), (4.0, 1.4, 1.0), wall_mat, rotation=(math.radians(90), 0.0, 0.0), collection=collection)
+    add_plane((center, -1.06, -0.995), (1.72, 0.08, 1.0), stripe_mat, collection=collection)
+    add_plane((center, 0.22, -0.996), (2.24, 0.08, 1.0), stripe_mat, collection=collection)
+    add_plane((center, 2.25, 1.18), (3.6, 1.18, 1.0), wall_mat, rotation=(math.radians(90), 0.0, 0.0), collection=collection)
+    add_cube((center, 1.62, 0.26), (1.42, 0.12, 0.26), wall_mat, collection=collection)
     add_plane((center - 1.95, 0.05, 0.72), (0.10, 0.92, 1.0), glass_mat, rotation=(0.0, math.radians(-10), 0.0), collection=collection)
     add_plane((center + 1.95, 0.05, 0.72), (0.10, 0.92, 1.0), glass_mat, rotation=(0.0, math.radians(10), 0.0), collection=collection)
+    add_plane((center - 1.28, 0.86, 0.92), (0.08, 0.62, 1.0), glass_mat, rotation=(0.0, math.radians(-24), 0.0), collection=collection)
+    add_plane((center + 1.28, 0.86, 0.92), (0.08, 0.62, 1.0), glass_mat, rotation=(0.0, math.radians(24), 0.0), collection=collection)
     add_cube((center - 2.03, 0.05, 0.78), (0.02, 0.98, 0.82), chrome_mat, collection=collection)
     add_cube((center + 2.03, 0.05, 0.78), (0.02, 0.98, 0.82), chrome_mat, collection=collection)
+    add_cube((center - 1.26, 0.86, 0.94), (0.018, 0.68, 0.72), chrome_mat, collection=collection)
+    add_cube((center + 1.26, 0.86, 0.94), (0.018, 0.68, 0.72), chrome_mat, collection=collection)
+    add_plane((center, 1.06, -0.994), (1.42, 0.06, 1.0), stripe_mat, collection=collection)
     area_light = add_light("AREA", (center, -1.2, 3.2), 260, collection=collection, scale=(4.0, 4.0, 4.0), color=(0.95, 0.97, 1.0))
     sun_light = add_light("SUN", (center, -3.0, 5.0), 1.2, collection=collection, rotation=(1.02, 0.0, -0.40), color=(0.90, 0.94, 1.0))
 
     rigs = []
     glints = []
     people = [
-        (center - 1.08, -0.14, "cyan", (0.42, 0.18, 0.08)),
-        (center - 0.28, 0.12, "magenta", (0.76, -0.12, -0.05)),
-        (center + 0.56, 0.04, "yellow", (0.34, 0.16, 0.03)),
-        (center + 1.28, -0.10, "green", (0.58, -0.16, -0.06)),
+        (center - 1.22, -0.10, "cyan", (0.42, 0.18, 0.08)),
+        (center - 0.36, 0.10, "magenta", (0.76, -0.12, -0.05)),
+        (center + 0.44, 0.02, "yellow", (0.34, 0.16, 0.03)),
+        (center + 1.12, -0.08, "green", (0.58, -0.16, -0.06)),
     ]
     for x, y, key, pose in people:
         rigs.append(build_person((x, y, -0.98), dancer_shells[key], dancer_cores[key], dancer_reflections[key], pose, collection=collection))
         glints.append(add_plane((x, y + 0.10, 1.38), (0.05, 0.015, 1.0), chrome_mat, collection=collection))
         glints.append(add_plane((x, y + 0.06, 1.12), (0.08, 0.015, 1.0), chrome_mat, collection=collection))
+        glints.append(add_plane((x + 0.02, y + 0.03, 0.88), (0.05, 0.014, 1.0), chrome_mat, collection=collection))
     return {"center": center, "rigs": rigs, "glints": glints, "lights": [area_light, sun_light]}
 
 
@@ -937,41 +953,42 @@ def build_water_showcase(collection):
 
 def build_cloud_showcase(collection):
     center = 10.0
-    sky_mat = build_material("CloudSky", (0.30, 0.58, 0.90), roughness=1.0, emission=0.0)
-    top_mat = build_material("CloudTop", (0.90, 0.94, 0.98), alpha=1.0, roughness=0.94)
-    under_mat = build_material("CloudUnder", (0.68, 0.76, 0.88), alpha=1.0, roughness=0.96)
+    sky_mat = build_material("CloudSky", (0.36, 0.68, 0.98), roughness=1.0, emission=0.0)
+    top_mat = build_material("CloudTop", (0.97, 0.98, 1.0), alpha=1.0, roughness=0.94)
+    under_mat = build_material("CloudUnder", (0.82, 0.88, 0.96), alpha=1.0, roughness=0.96)
     sun_mat = build_material("CloudSun", (0.98, 0.96, 0.88), alpha=1.0, roughness=0.14, emission=0.05)
-    add_cube((center, 2.20, 2.55), (8.0, 0.08, 3.6), sky_mat, collection=collection)
+    add_cube((center, 2.20, 2.55), (8.8, 0.08, 3.9), sky_mat, collection=collection)
     add_plane((center + 2.90, 2.12, 3.78), (0.54, 0.54, 1.0), sun_mat, rotation=(math.radians(90), 0.0, 0.0), collection=collection)
     cloud_objects = []
     for pos, scale in [
-        ((center - 2.5, 0.78, 2.58), (1.02, 0.70, 0.50)),
-        ((center - 0.1, 0.92, 2.74), (1.36, 0.86, 0.62)),
-        ((center + 2.1, 0.72, 2.56), (1.14, 0.74, 0.54)),
-        ((center - 1.5, 0.18, 2.08), (0.76, 0.50, 0.36)),
-        ((center + 1.2, 0.16, 2.10), (0.74, 0.48, 0.34)),
+        ((center - 2.8, 0.88, 2.86), (0.92, 0.66, 0.46)),
+        ((center - 1.1, 0.78, 2.62), (1.00, 0.70, 0.50)),
+        ((center + 0.52, 0.96, 2.92), (1.18, 0.80, 0.58)),
+        ((center + 2.34, 0.76, 2.70), (0.96, 0.68, 0.48)),
+        ((center - 2.0, 0.10, 2.20), (0.64, 0.44, 0.30)),
+        ((center + 1.66, 0.12, 2.14), (0.62, 0.42, 0.30)),
     ]:
         before = set(obj.name for obj in collection.objects)
         add_cloud_cluster(pos, top_mat, under_mat, scale, collection=collection)
         cloud_objects.extend([obj for obj in collection.objects if obj.name not in before])
     for pos, scale in [
-        ((center - 3.2, 0.08, 1.92), (0.62, 0.42, 0.30)),
-        ((center - 0.8, -0.06, 1.86), (0.78, 0.50, 0.36)),
-        ((center + 2.8, 0.02, 1.88), (0.68, 0.44, 0.32)),
+        ((center - 3.3, -0.04, 1.94), (0.54, 0.38, 0.26)),
+        ((center - 0.32, -0.08, 1.82), (0.66, 0.44, 0.30)),
+        ((center + 2.96, -0.02, 1.90), (0.56, 0.38, 0.28)),
     ]:
         before = set(obj.name for obj in collection.objects)
         add_cloud_cluster(pos, top_mat, under_mat, scale, collection=collection)
         cloud_objects.extend([obj for obj in collection.objects if obj.name not in before])
-    sun_light = add_light("SUN", (center, -2.2, 5.6), 0.42, collection=collection, rotation=(0.82, 0.0, -0.04), color=(1.0, 0.98, 0.95))
-    area_light = add_light("AREA", (center, -0.8, 3.4), 24, collection=collection, scale=(6.2, 6.2, 6.2), color=(0.90, 0.95, 1.0))
+    sun_light = add_light("SUN", (center, -2.2, 5.6), 0.58, collection=collection, rotation=(0.82, 0.0, -0.04), color=(1.0, 0.98, 0.95))
+    area_light = add_light("AREA", (center, -0.8, 3.4), 34, collection=collection, scale=(6.6, 6.6, 6.6), color=(0.90, 0.95, 1.0))
     return {"center": center, "clouds": cloud_objects, "lights": [sun_light, area_light]}
 
 
 def build_glass_showcase(collection):
     center = 20.0
     floor_mat = build_material("GlassFloor", (0.05, 0.10, 0.18), roughness=0.05, metallic=0.22)
-    wall_mat = build_material("GlassBack", (0.04, 0.08, 0.16), roughness=0.88)
-    void_mat = build_material("GlassVoid", (0.01, 0.02, 0.05), roughness=0.98)
+    wall_mat = build_material("GlassBack", (0.03, 0.06, 0.12), roughness=0.88)
+    void_mat = build_material("GlassVoid", (0.00, 0.01, 0.03), roughness=0.98)
     glass_mat = build_glass_material("PavilionGlass")
     chrome_mat = build_material("PavilionChrome", (0.96, 0.98, 1.0), roughness=0.05, metallic=0.78)
     glow_mat = build_material("PavilionGlow", (0.60, 0.88, 0.98), alpha=0.52, roughness=0.06, emission=0.02)
@@ -981,17 +998,27 @@ def build_glass_showcase(collection):
     skyglass_mat = build_material("GlassSky", (0.32, 0.64, 0.96), roughness=1.0)
 
     add_plane((center, 0.0, -1.0), (3.1, 2.6, 1.0), floor_mat, collection=collection)
-    add_cube((center, 2.95, 1.6), (3.8, 0.10, 2.2), skyglass_mat, collection=collection)
-    add_cube((center, 2.42, 1.24), (3.2, 0.10, 1.9), wall_mat, collection=collection)
+    add_plane((center, -0.34, -0.996), (1.14, 0.12, 1.0), reflect_mat, collection=collection)
+    add_plane((center, 0.42, -0.996), (1.08, 0.08, 1.0), reflect_mat, collection=collection)
+    add_cube((center, 2.95, 1.6), (4.0, 0.10, 2.3), skyglass_mat, collection=collection)
+    add_cube((center, 2.42, 1.24), (3.4, 0.10, 1.95), wall_mat, collection=collection)
     add_cube((center - 1.36, 0.28, 0.84), (0.10, 1.32, 1.04), glass_mat, rotation=(0.0, math.radians(-12), 0.0), collection=collection)
     add_cube((center + 1.36, 0.28, 0.84), (0.10, 1.32, 1.04), glass_mat, rotation=(0.0, math.radians(12), 0.0), collection=collection)
+    add_plane((center - 0.78, 0.44, 0.76), (0.04, 1.10, 1.0), chrome_mat, collection=collection)
+    add_plane((center + 0.78, 0.44, 0.76), (0.04, 1.10, 1.0), chrome_mat, collection=collection)
+    add_plane((center - 0.80, -0.22, 0.18), (0.03, 0.86, 1.0), chrome_mat, collection=collection)
+    add_plane((center + 0.80, -0.22, 0.18), (0.03, 0.86, 1.0), chrome_mat, collection=collection)
     add_cube((center - 0.86, 0.98, 1.68), (0.80, 0.04, 0.04), chrome_mat, collection=collection)
     add_cube((center + 0.86, 0.98, 1.68), (0.80, 0.04, 0.04), chrome_mat, collection=collection)
     add_cube((center, 0.98, 1.72), (1.86, 0.04, 0.04), chrome_mat, collection=collection)
+    add_cube((center, 0.34, -0.22), (0.68, 0.04, 0.04), chrome_mat, collection=collection)
     add_cube((center, 0.78, 0.62), (0.44, 0.08, 1.06), void_mat, collection=collection)
     add_cube((center, -0.10, 0.38), (0.36, 0.08, 0.64), glow_mat, collection=collection)
     add_cube((center, -0.10, 0.38), (0.04, 0.12, 0.78), chrome_mat, collection=collection)
+    add_cube((center, 1.26, 0.92), (0.54, 0.10, 0.96), void_mat, collection=collection)
+    add_cube((center, 1.26, 0.92), (0.08, 0.12, 1.04), chrome_mat, collection=collection)
     add_plane((center, -0.38, -0.992), (1.85, 0.10, 1.0), reflect_mat, collection=collection)
+    add_plane((center, 0.58, -0.992), (2.04, 0.10, 1.0), reflect_mat, collection=collection)
     for x, ang in [(-0.94, 26), (0.0, 0), (0.94, -26)]:
         add_cube((center + x, 0.10, -0.960), (0.26, 0.92, 0.04), reflect_mat, rotation=(0.0, math.radians(ang), 0.0), collection=collection)
         add_cube((center + x, 0.10, -0.988), (0.02, 1.04, 0.02), chrome_mat, collection=collection)
@@ -1004,7 +1031,7 @@ def build_glass_showcase(collection):
         add_plane((center + off[0], off[1], off[2]), (0.14, 0.32, 1.0), leaf_mat, rotation=(math.radians(74), 0.0, math.radians(18)), collection=collection)
     add_cube((center - 2.10, -0.30, 0.92), (0.16, 1.30, 1.40), wall_mat, rotation=(0.0, math.radians(-16), 0.0), collection=collection)
     add_plane((center, -0.92, -0.995), (2.20, 0.18, 1.0), void_mat, collection=collection)
-    area_light = add_light("AREA", (center, -1.3, 3.5), 300, collection=collection, scale=(4.4, 4.4, 4.4), color=(0.92, 0.98, 1.0))
+    area_light = add_light("AREA", (center, -1.3, 3.5), 340, collection=collection, scale=(4.4, 4.4, 4.4), color=(0.92, 0.98, 1.0))
     sun_light = add_light("SUN", (center, -2.6, 5.2), 1.18, collection=collection, rotation=(0.96, 0.0, -0.28), color=(0.95, 0.98, 1.0))
     return {"center": center, "lights": [area_light, sun_light]}
 
@@ -1088,6 +1115,7 @@ def animate_dancers(t, features):
         if base:
             glint.location = Vector(base)
         glint.location.y += math.sin(t * 3.0 + idx) * 0.04
+        glint.location.z += abs(math.sin(t * 2.4 + idx * 0.5)) * 0.02
 
 
 def animate_water(t, features):
@@ -1128,6 +1156,11 @@ def animate_glass(t, features):
             if base:
                 obj.location = Vector(base)
             obj.location.y += math.sin(t * 0.9 + idx * 0.5) * (0.02 + highs * 0.015)
+        elif "PavilionChrome" in obj.name:
+            base = obj.get("_base_loc")
+            if base:
+                obj.location = Vector(base)
+            obj.location.x += math.sin(t * 0.55 + idx * 0.14) * 0.01
 
 
 def features_for_frame(index):
@@ -1164,10 +1197,15 @@ def city_camera(scene_name, local_t, segment_duration, features, shot):
     energy = float(features.get("energy", 0.0))
     if scene_name == "clouds":
         local = local_t
+        if shot == "cloud_flythrough":
+            return (
+                (cloud_center - 1.10 + local * 0.26, -1.72 + math.sin(local * 0.46) * 0.06, 2.34 + math.sin(local * 0.28) * 0.08),
+                (cloud_center + 0.06, 0.78, 2.38),
+            )
         if shot == "crane":
             return (
-                (cloud_center - 0.9 + local * 0.08, -3.4 + local * 0.04, 1.75 + local * 0.06),
-                (cloud_center + 0.20, 0.62, 2.32),
+                (cloud_center - 0.45 + local * 0.05, -2.7 + local * 0.03, 2.28 + local * 0.04),
+                (cloud_center + 0.18, 0.74, 2.48),
             )
         return (
             (cloud_center + math.sin(local * 0.24) * 0.55, -2.9 + local * 0.06, 2.18 + math.sin(local * 0.18) * 0.12),
@@ -1175,21 +1213,53 @@ def city_camera(scene_name, local_t, segment_duration, features, shot):
         )
     if scene_name == "glass":
         local = local_t
+        if shot == "glass_approach":
+            return (
+                (glass_center - 1.28 + local * 0.24, -2.20 + local * 0.07, 1.00 + math.sin(local * 0.30) * 0.04),
+                (glass_center + 0.02, 0.58, 0.58),
+            )
+        if shot == "glass_corridor":
+            return (
+                (glass_center + 0.32 + math.sin(local * 0.16) * 0.04, -2.06 + local * 0.14, 0.86 + energy * 0.03),
+                (glass_center + 0.06, 1.12, 0.32),
+            )
         if shot == "side_reveal":
             return (
                 (glass_center - 2.2 + local * 0.12, -1.9 + math.sin(local * 0.4) * 0.10, 0.86 + energy * 0.05),
                 (glass_center + 0.18, 0.58, 0.86),
             )
         return (
-            (glass_center - 1.10 + local * 0.18, -2.55 + local * 0.08, 1.08 + math.sin(local * 0.35) * 0.08),
-            (glass_center + 0.20, 0.48, 0.80),
+            (glass_center - 0.82 + local * 0.12, -2.08 + local * 0.05, 1.12 + math.sin(local * 0.28) * 0.06),
+            (glass_center + 0.14, 0.66, 0.84),
         )
     if scene_name == "dancers":
         local = local_t
+        if shot == "finale_orbit":
+            radius = 1.48 + energy * 0.10
+            angle = -0.86 + local * 0.64
+            return (
+                (dancer_center + math.sin(angle) * radius, -1.22 + math.cos(angle) * 0.18, 1.12 + bass * 0.08),
+                (dancer_center + 0.02, 0.80, 0.22),
+            )
+        if shot == "dancer_wide":
+            return (
+                (dancer_center + math.sin(local * 0.20) * 0.12, -3.04 + local * 0.06, 1.18 + bass * 0.05),
+                (dancer_center + 0.06, 0.04, 0.12),
+            )
+        if shot == "dancer_reflection_close":
+            return (
+                (dancer_center + 0.02 + math.sin(local * 0.16) * 0.06, -1.92 + local * 0.02, 0.22 + bass * 0.04),
+                (dancer_center + 0.02, 0.18, -0.72),
+            )
+        if shot == "hero_close":
+            return (
+                (dancer_center + 0.42 + math.sin(local * 0.14) * 0.04, -2.12 + math.cos(local * 0.10) * 0.05, 0.62 + bass * 0.04),
+                (dancer_center + 0.04, 0.02, -0.18),
+            )
         if shot == "close_orbit":
             return (
-                (dancer_center + math.sin(local * 0.42) * 0.9, -1.65 + math.cos(local * 0.36) * 0.18, 1.22 + bass * 0.10),
-                (dancer_center + 0.02, 0.00, 1.04),
+                (dancer_center + math.sin(local * 0.22) * 0.38, -1.18 + math.cos(local * 0.28) * 0.10, 1.58 + bass * 0.08),
+                (dancer_center + 0.10, 0.06, 1.12),
             )
         radius = 1.55 + energy * 0.08
         angle = -0.95 + local * 0.24
@@ -1198,6 +1268,16 @@ def city_camera(scene_name, local_t, segment_duration, features, shot):
             (dancer_center + 0.05, 0.02, 0.98),
         )
     local = local_t
+    if shot == "water_wide":
+        return (
+            (water_center - 1.46 + math.sin(local * 0.18) * 0.16, -1.58 + local * 0.04, 1.06 + bass * 0.05),
+            (water_center + 0.16, 0.54, -0.34),
+        )
+    if shot == "water_splash_close":
+        return (
+            (water_center - 0.18 + math.sin(local * 0.24) * 0.10, -0.62 + local * 0.02, 0.24 + bass * 0.04),
+            (water_center + 0.04, 1.10, -0.44),
+        )
     if shot == "basin_arc":
         return (
             (water_center - 1.22 + math.sin(local * 0.28) * 0.42, -1.18 + local * 0.06, 0.96 + bass * 0.06),
@@ -1441,7 +1521,26 @@ def _run_blender_process(
     return completed.returncode, script_path, stdout_path, stderr_path
 
 
-def _build_blender_city_sequence(duration: float) -> list[dict[str, object]]:
+def _build_blender_city_sequence(duration: float, *, preset: str = "lofi") -> list[dict[str, object]]:
+    if preset == "worlds_material_proof":
+        cuts = [min(duration, value) for value in (3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, duration)]
+        starts = [0.0] + cuts[:-1]
+        shots = [
+            ("clouds", "cloud_flythrough"),
+            ("glass", "glass_approach"),
+            ("dancers", "dancer_wide"),
+            ("dancers", "dancer_reflection_close"),
+            ("water", "water_wide"),
+            ("water", "water_splash_close"),
+            ("glass", "glass_corridor"),
+            ("dancers", "finale_orbit"),
+        ]
+        sequence: list[dict[str, object]] = []
+        for (scene, shot), start, end in zip(shots, starts, cuts):
+            if end - start <= 0.01:
+                continue
+            sequence.append({"scene": scene, "shot": shot, "start": start, "end": end})
+        return sequence
     if duration <= 30.0:
         return [
             {"scene": "clouds", "shot": "drift", "start": 0.0, "end": min(duration, 6.0)},
@@ -1471,7 +1570,48 @@ def _build_blender_city_sequence(duration: float) -> list[dict[str, object]]:
     return sequence
 
 
-def _city_debug_entries(sequence: list[dict[str, object]], duration: float, fps: int) -> list[dict[str, object]]:
+def _city_debug_entries(
+    sequence: list[dict[str, object]],
+    duration: float,
+    fps: int,
+    *,
+    preset: str = "lofi",
+) -> list[dict[str, object]]:
+    if preset == "worlds_material_proof":
+        targets = [
+            (2.0, "cloud_flythrough"),
+            (4.5, "glass_approach"),
+            (7.5, "dancer_wide"),
+            (10.5, "dancer_reflection_close"),
+            (13.5, "water_wide"),
+            (16.5, "water_splash_close"),
+            (19.5, "glass_corridor"),
+            (22.5, "finale_orbit"),
+        ]
+        entries: list[dict[str, object]] = []
+        for target, label in targets:
+            t = min(duration, target)
+            matched = next(
+                (
+                    segment
+                    for segment in sequence
+                    if float(segment["start"]) <= (t + 0.001) < float(segment["end"]) + 0.001
+                ),
+                None,
+            )
+            scene = "scene"
+            shot = label
+            if matched is not None:
+                scene = str(matched["scene"])
+                shot = str(matched.get("shot", "shot"))
+            frame_index = max(0, round(t * fps))
+            entries.append(
+                {
+                    "frame": frame_index + 1,
+                    "filename": f"t_{t:05.2f}s__{shot}.png",
+                }
+            )
+        return entries
     entries: list[dict[str, object]] = []
     for segment in sequence:
         target = min(duration, (float(segment["start"]) + float(segment["end"])) * 0.5)
@@ -2068,6 +2208,7 @@ def render_video_blender(
     blender_diagnostic_engine: str | None = None,
 ) -> None:
     del seed, crf, audio_bitrate, debug_labels
+    original_preset = preset
     if preset == "city_promise":
         preset = "lofi"
     if preset not in {"worlds_material_proof", "lofi"}:
@@ -2175,11 +2316,11 @@ def render_video_blender(
     if blender_proof_stills and debug_frames_dir is None:
         raise RuntimeError("Blender proof stills require --debug-frames so PNGs have a destination directory.")
     analysis = analyze_audio(input_path, fps=fps, duration_limit=duration, backend=analysis_backend)
-    blender_city_preview = preset == "lofi"
+    blender_city_preview = preset in {"lofi", "worlds_material_proof"} and not blender_proof_stills
     timeline = build_timeline(analysis.duration, preset=preset, scene_grammar=scene_grammar)
-    city_sequence = _build_blender_city_sequence(analysis.duration) if blender_city_preview else []
+    city_sequence = _build_blender_city_sequence(analysis.duration, preset=preset) if blender_city_preview else []
     if blender_city_preview:
-        debug_entries = _city_debug_entries(city_sequence, analysis.duration, fps)
+        debug_entries = _city_debug_entries(city_sequence, analysis.duration, fps, preset=preset)
         debug_targets = [max(0.0, (int(entry["frame"]) - 1) / fps) for entry in debug_entries]
     else:
         debug_targets = debug_targets_for_timeline(analysis.duration, preset, timeline)
@@ -2187,6 +2328,9 @@ def render_video_blender(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     if debug_frames_dir is not None:
         debug_frames_dir.mkdir(parents=True, exist_ok=True)
+        if blender_city_preview:
+            for stale_png in debug_frames_dir.glob("*.png"):
+                stale_png.unlink()
 
     frame_count = len(analysis.frame_times)
     debug_entries = list(debug_entries)
@@ -2221,6 +2365,7 @@ def render_video_blender(
         "render_profile": render_profile or "final",
         "aesthetic": aesthetic,
         "proof_stills": blender_proof_stills,
+        "preset": original_preset,
         "proof_frame_numbers": [entry["frame"] for entry in debug_entries],
         "debug_frames_dir": str(debug_frames_dir.resolve()) if debug_frames_dir is not None else None,
         "debug_frames": debug_entries,
